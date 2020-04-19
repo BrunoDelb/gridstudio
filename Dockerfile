@@ -72,4 +72,4 @@ EXPOSE 4430
 
 WORKDIR /home/source/proxy/
 
-CMD ["bash","run-manager-proxy.sh"]
+CMD ["./run-manager-proxy.sh"]

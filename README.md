@@ -1,5 +1,40 @@
 <img src='http://gridstudio.io/image/logo-grid.svg' width='200px' style='margin-bottom: 30px;'>
 
+```
+docker build -t devopstestlab/gridstudio .
+```
+
+```
+docker run --name=gridstudio --rm -p 8080:8080 -p 4430:4430 -p 3000:3000 devopstestlab/gridstudio
+```
+
+```
+open http://localhost:8080/
+```
+
+```
+# Read all data
+df = pd.read_csv("https://opendata.ecdc.europa.eu/covid19/casedistribution/csv").dropna()
+print(df.head())
+# Convert date to integer (because of Grid Studio limitation)
+df.dateRep = pd.to_datetime(df.dateRep, format='%d/%m/%Y').dt.strftime('%Y%m%d').astype(int)
+# Filtrer
+# Get Australia data
+df_oz = df[df.countriesAndTerritories == 'Australia']
+# select only the dateRep, cases and deaths columns.
+df_oz = df_oz[['dateRep', 'cases', 'deaths']]
+# calculate the cumulative cases and deaths.
+df_oz = df_oz.sort_values('dateRep')
+df_oz['cumCases'] = df_oz.cases.cumsum()
+df_oz['cumDeaths'] = df_oz.deaths.cumsum()
+# Show in sheet
+sheet("A1", df_oz)
+# Pandas / Plot
+data = sheet("B1:B40")
+data.plot(title='Daily New Cases')
+show()
+```
+
 Grid studio is a web-based spreadsheet application with full integration of the Python programming language.
 
 It intends to provide an integrated workflow for loading, cleaning, manipulating, and visualizing data. This is achieved through a spreadsheet backend written in Go with integration of the Python runtime to manipulate its contents.
